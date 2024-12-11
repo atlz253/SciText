@@ -37,7 +37,7 @@ app.post("/paper", async (request, response) => {
   const file = request.files?.pdf;
   if (file) {
     // @ts-ignore
-    const text = await parser.parsePDFTextFromBuffer(file.data);
+    const text = await parser.fromBuffer(file.data);
     response.send(text);
   } else {
     response.send("Error");
