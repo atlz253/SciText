@@ -12,11 +12,13 @@ await db.config();
 
 const app = express();
 app.use(fileUpload());
+app.set("views", path.resolve("./src/view/views"));
+app.set("view engine", "hbs");
 
 const port = parseInt(process.env.PORT || "") || 3000;
 
 app.get("/", (request, response) => {
-  response.sendFile(path.resolve("./static/index.html"));
+  response.render("index.hbs");
 });
 
 app.get("/ping", (request, response) => {
