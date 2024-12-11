@@ -1,13 +1,21 @@
 import express from "express";
+import dotenv from "dotenv";
 import { Sequelize } from "sequelize";
+
+dotenv.config();
 
 const app = express();
 const port = 3000;
 
-const sequelize = new Sequelize("scitext", "postgres", "123456", {
-  host: "localhost",
-  dialect: "postgres",
-});
+const sequelize = new Sequelize(
+  process.env.DB_NAME || "",
+  process.env.DB_USERNAME || "",
+  process.env.DB_PASSWORD || "",
+  {
+    host: "localhost",
+    dialect: "postgres",
+  }
+);
 
 try {
   await sequelize.authenticate();
