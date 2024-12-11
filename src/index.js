@@ -10,7 +10,7 @@ dotenv.config();
 const app = express();
 app.use(fileUpload());
 
-const port = 3000;
+const port = parseInt(process.env.PORT || "") || 3000;
 
 const sequelize = new Sequelize(
   process.env.DB_NAME || "",
