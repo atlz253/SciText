@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import { Sequelize } from "sequelize";
+import path from "node:path";
 
 dotenv.config();
 
@@ -25,7 +26,7 @@ try {
 }
 
 app.get("/", (request, response) => {
-  response.send("Hello world!");
+  response.sendFile(path.resolve("./static/index.html"));
 });
 
 app.listen(port, () => console.log(`Available on: http://localhost:${port}`));
