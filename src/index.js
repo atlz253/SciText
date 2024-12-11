@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { Sequelize } from "sequelize";
 import path from "node:path";
 import fileUpload from "express-fileupload";
+import { parsePDFTextFromBuffer } from "./parser/index.js";
 
 dotenv.config();
 
@@ -32,9 +33,15 @@ app.get("/", (request, response) => {
   response.sendFile(path.resolve("./static/index.html"));
 });
 
-app.post("/paper", (request, response) => {
-  console.log(request.files?.pdf);
-  response.send("OK");
+app.post("/paper", async (request, response) => {
+  const file = request.files?.pdf;
+  if (file) {
+    // @ts-ignore
+    const text = await parsePDFTextFromBuffer(file.data);
+    response.send(text);
+  } else {
+    response.send("Error");
+  }
 });
 
 app.listen(port, () => console.log(`Available on: http://localhost:${port}`));
