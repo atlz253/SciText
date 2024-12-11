@@ -48,4 +48,12 @@ export default class DB {
   createPaper(title, text, md5) {
     return Paper.create({ title, text, md5 });
   }
+
+  getPaperByID(id) {
+    return Paper.findOne({
+      where: {
+        id,
+      },
+    });
+  }
 }

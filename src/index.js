@@ -19,18 +19,33 @@ app.get("/", (request, response) => {
   response.sendFile(path.resolve("./static/index.html"));
 });
 
+app.get("/ping", (request, response) => {
+  console.log(request.url);
+  response.send("pong");
+});
+
 app.post("/paper", async (request, response) => {
   const file = request.files?.pdf;
-  console.log(file);
 
   if (file) {
     // @ts-ignore
     const text = await parser.fromBuffer(file.data);
     // @ts-ignore
-    db.createPaper(file.name, text, file.md5);
-    response.send(text);
+    const paper = await db.createPaper(file.name, text, file.md5);
+    // @ts-ignore
+    response.redirect(`/paper/${paper.id}`);
   } else {
     response.send("Error");
+  }
+});
+
+app.get("/paper/:id", async (request, response) => {
+  const paper = await db.getPaperByID(request.params.id);
+  if (paper) {
+    // @ts-ignore
+    response.send(paper.text);
+  } else {
+    response.send("Paper not found");
   }
 });
 
