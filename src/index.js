@@ -8,6 +8,7 @@ import DB from "./db/index.js";
 dotenv.config();
 
 const db = new DB();
+await db.config();
 
 const app = express();
 app.use(fileUpload());
@@ -20,9 +21,13 @@ app.get("/", (request, response) => {
 
 app.post("/paper", async (request, response) => {
   const file = request.files?.pdf;
+  console.log(file);
+
   if (file) {
     // @ts-ignore
     const text = await parser.fromBuffer(file.data);
+    // @ts-ignore
+    db.createPaper(file.name, text, file.md5);
     response.send(text);
   } else {
     response.send("Error");

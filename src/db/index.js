@@ -1,4 +1,6 @@
-import { Sequelize } from "sequelize";
+import { DataTypes, Model, Sequelize } from "sequelize";
+
+class Paper extends Model {}
 
 export default class DB {
   #sequelize;
@@ -13,15 +15,37 @@ export default class DB {
         dialect: "postgres",
       }
     );
+  }
 
-    try {
-      this.#sequelize
-        .authenticate()
-        .then(() =>
-          console.log("Connection has been established successfully.")
-        );
-    } catch (e) {
-      console.error("Unable to connect to the database:", e);
-    }
+  async config() {
+    Paper.init(
+      {
+        id: {
+          type: DataTypes.INTEGER,
+          autoIncrement: true,
+          primaryKey: true,
+        },
+        title: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        text: {
+          type: DataTypes.TEXT("long"),
+          allowNull: false,
+          defaultValue: "",
+        },
+        md5: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+      },
+      { sequelize: this.#sequelize }
+    );
+
+    await this.#sequelize.sync();
+  }
+
+  createPaper(title, text, md5) {
+    return Paper.create({ title, text, md5 });
   }
 }
