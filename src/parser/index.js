@@ -1,6 +1,6 @@
 import { PdfReader } from "pdfreader";
 
-export function parsePDFTextFromBuffer(buffer) {
+function parsePDFTextFromBuffer(buffer) {
   let result = "";
   return new Promise((resolve, reject) => {
     new PdfReader().parseBuffer(buffer, (err, item) => {
@@ -10,3 +10,7 @@ export function parsePDFTextFromBuffer(buffer) {
     });
   });
 }
+
+export default {
+  parsePDFTextFromBuffer,
+};
