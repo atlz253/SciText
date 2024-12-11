@@ -2,10 +2,13 @@ import express from "express";
 import dotenv from "dotenv";
 import { Sequelize } from "sequelize";
 import path from "node:path";
+import fileUpload from "express-fileupload";
 
 dotenv.config();
 
 const app = express();
+app.use(fileUpload());
+
 const port = 3000;
 
 const sequelize = new Sequelize(
@@ -27,6 +30,11 @@ try {
 
 app.get("/", (request, response) => {
   response.sendFile(path.resolve("./static/index.html"));
+});
+
+app.post("/paper", (request, response) => {
+  console.log(request.files?.pdf);
+  response.send("OK");
 });
 
 app.listen(port, () => console.log(`Available on: http://localhost:${port}`));
