@@ -19,7 +19,7 @@ function config(app, db, parser) {
     const paper = await db.getPaperByID(request.params.id);
     if (paper) {
       // @ts-ignore
-      response.send(paper.text);
+      response.render("paper.hbs", { paper });
     } else {
       response.send("Paper not found");
     }
