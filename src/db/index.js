@@ -56,4 +56,10 @@ export default class DB {
       },
     });
   }
+
+  getAllPapers() {
+    return Paper.findAll({
+      attributes: ["id", "title", "createdAt"],
+    });
+  }
 }
