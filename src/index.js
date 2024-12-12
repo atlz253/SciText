@@ -16,7 +16,7 @@ app.use(fileUpload());
 view.config(app, db, parser);
 app.use("/", view.router);
 
-const port = parseInt(process.env.PORT || "") || 3000;
+const port = process.env.PORT || 3000;
 
 app.get("/ping", (request, response) => {
   console.log(request.url);
