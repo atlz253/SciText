@@ -29,8 +29,10 @@ function config(app, db, parser) {
     const file = request.files?.pdf;
 
     if (file) {
-      parser.fromBuffer(file.data, async (err, text) => {
-        if (err) {
+      // @ts-ignore
+      const worker = parser.fromBuffer(file.data);
+      worker.on("message", async ({ error, text }) => {
+        if (error) {
           response.sendStatus(500);
         } else {
           // @ts-ignore
@@ -39,6 +41,7 @@ function config(app, db, parser) {
           response.redirect(`/paper/${paper.id}`);
         }
       });
+      response.on("close", () => worker.terminate());
     } else {
       response.sendStatus(500);
     }
