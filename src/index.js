@@ -17,9 +17,9 @@ app.use(fileUpload());
 view.config(app, db, parser);
 app.use("/", view.router);
 
-rest.config(app, db, parser);
-app.use("/api", rest.router);
-
 const port = process.env.PORT || 3000;
+
+rest.config(app, db, parser, port);
+app.use("/", rest.router);
 
 app.listen(port, () => console.log(`Available on: http://localhost:${port}`));
