@@ -4,6 +4,7 @@ import path from "node:path";
 import fileUpload from "express-fileupload";
 import parser from "./parser/index.js";
 import DB from "./db/index.js";
+import hbs from "hbs";
 
 dotenv.config();
 
@@ -15,10 +16,13 @@ app.use(fileUpload());
 app.set("views", path.resolve("./src/view/views"));
 app.set("view engine", "hbs");
 
+hbs.registerHelper("localeTime", (date) => date.toLocaleString());
+
 const port = parseInt(process.env.PORT || "") || 3000;
 
-app.get("/", (request, response) => {
-  response.render("index.hbs");
+app.get("/", async (request, response) => {
+  const papers = await db.getAllPapers();
+  response.render("index.hbs", { papers });
 });
 
 app.get("/ping", (request, response) => {

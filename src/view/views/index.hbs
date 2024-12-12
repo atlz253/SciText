@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -12,5 +11,25 @@
         <input type="submit" value="Send" />
       </form>
     </header>
+    <main>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each papers}}
+            <tr>
+              <td>{{this.id}}</td>
+              <td><a href="/paper/{{this.id}}">{{this.title}}</a></td>
+              <td>{{localeTime this.createdAt}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </main>
   </body>
 </html>
