@@ -29,12 +29,16 @@ function config(app, db, parser) {
     const file = request.files?.pdf;
 
     if (file) {
-      // @ts-ignore
-      const text = await parser.fromBuffer(file.data);
-      // @ts-ignore
-      const paper = await db.createPaper(file.name, text, file.md5);
-      // @ts-ignore
-      response.redirect(`/paper/${paper.id}`);
+      parser.fromBuffer(file.data, async (err, text) => {
+        if (err) {
+          response.sendStatus(500);
+        } else {
+          // @ts-ignore
+          const paper = await db.createPaper(file.name, text, file.md5);
+          // @ts-ignore
+          response.redirect(`/paper/${paper.id}`);
+        }
+      });
     } else {
       response.sendStatus(500);
     }

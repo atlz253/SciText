@@ -1,15 +1,13 @@
-import { PdfReader } from "pdfreader";
+import path from "node:path";
+import threads from "node:worker_threads";
 
 class PDFTextParser {
-  fromBuffer(buffer) {
-    let result = "";
-    return new Promise((resolve, reject) => {
-      new PdfReader().parseBuffer(buffer, (err, item) => {
-        if (err) reject("error: " + err);
-        else if (!item) resolve(result);
-        else if (item.text) result += " " + item.text;
-      });
-    });
+  fromBuffer(buffer, handler) {
+    const worker = new threads.Worker(path.resolve("./src/parser/worker.js"));
+
+    worker.postMessage(buffer);
+
+    worker.on("message", ({ error, text }) => handler(error, text));
   }
 }
 
