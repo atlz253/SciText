@@ -1,4 +1,4 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
+import { DataTypes, Model, Op, Sequelize } from "sequelize";
 
 class Paper extends Model {}
 
@@ -61,6 +61,17 @@ export default class DB {
   getAllPapers() {
     return Paper.findAll({
       attributes: ["id", "title", "createdAt"],
+    });
+  }
+
+  getPapersByQuery(query) {
+    return Paper.findAll({
+      attributes: ["id", "title", "createdAt"],
+      where: {
+        text: {
+          [Op.iLike]: `%${query}%`,
+        },
+      },
     });
   }
 }
