@@ -66,6 +66,30 @@ function config(app, db, parser, port) {
       : db.getAllPapers());
     response.json({ papers });
   });
+
+  /**
+   * @swagger
+   * /api/paper/{id}:
+   *  get:
+   *    description: get paper by ID
+   *    parameters:
+   *      - name: id
+   *        in: path
+   *        required: true
+   *        description: Paper ID
+   *        type: number
+   *    responses:
+   *      200:
+   *        description: Object with paper
+   */
+  router.get("/api/paper/:id", async (request, response) => {
+    const paper = await db.getPaperByID(request.params.id);
+    if (paper) {
+      response.json({ paper });
+    } else {
+      response.sendStatus(404);
+    }
+  });
 }
 
 export default { config, router };
