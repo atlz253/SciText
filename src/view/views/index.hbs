@@ -7,8 +7,14 @@
   <body>
     <header>
       <form action="paper" method="post" enctype="multipart/form-data">
-        <label>Upload and parse PDF: <input type="file" name="pdf" /></label>
+        <label><b>Upload and parse PDF:</b>
+          <input type="file" name="pdf" /></label>
         <input type="submit" value="Send" />
+      </form>
+      <form action="" method="get">
+        <label><b>Search:</b>
+          <input type="text" name="q" value="{{searchQuery}}" /></label>
+        <input type="submit" value="Search" />
       </form>
     </header>
     <main>

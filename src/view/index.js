@@ -11,8 +11,11 @@ function config(app, db, parser) {
   hbs.registerHelper("localeTime", (date) => date.toLocaleString());
 
   router.get("/", async (request, response) => {
-    const papers = await db.getAllPapers();
-    response.render("index.hbs", { papers });
+    const searchQuery = request.query.q || "";
+    const papers = await (searchQuery
+      ? db.getPapersByQuery(searchQuery)
+      : db.getAllPapers());
+    response.render("index.hbs", { papers, searchQuery });
   });
 
   router.get("/paper/:id", async (request, response) => {
