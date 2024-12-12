@@ -13,6 +13,7 @@ export default class DB {
       {
         host: "localhost",
         dialect: "postgres",
+        logging: false,
       }
     );
   }
