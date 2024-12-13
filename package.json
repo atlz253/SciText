@@ -2,7 +2,8 @@
   "name": "sci-text-workspace",
   "workspaces": [
     "app",
-    "pdf-generator"
+    "pdf-generator",
+    "benchmark"
   ],
   "scripts": {
     "app:start": "npm run start --workspace=app",
