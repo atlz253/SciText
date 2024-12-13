@@ -60,11 +60,27 @@ function config(app, db, parser, port) {
    *         description: Object with papers
    */
   router.post("/api/paper", async (request, response) => {
-    const { searchQuery } = request.body;
-    const papers = await (searchQuery
-      ? db.getPapersByQuery(searchQuery)
-      : db.getAllPapers());
-    response.json({ papers });
+    const file = request.files?.pdf;
+
+    if (file) {
+      const worker = parser.fromBuffer(file.data);
+      worker.on("message", async ({ error, text }) => {
+        if (error) {
+          response.sendStatus(500);
+        } else {
+          // @ts-ignore
+          const paper = await db.createPaper(file.name, text, file.md5);
+          // @ts-ignore
+          response.json({ id: paper.id });
+        }
+      });
+    } else {
+      const { searchQuery } = request.body;
+      const papers = await (searchQuery
+        ? db.getPapersByQuery(searchQuery)
+        : db.getAllPapers());
+      response.json({ papers });
+    }
   });
 
   /**
