@@ -32,12 +32,13 @@ if (threads.isMainThread) {
     );
   program.parse(process.argv);
   const options = program.opts();
+  const workerThreadsCount = Math.min(options.threadsCount, options.count);
 
   if (options.seed) faker.seed(parseInt(options.seed));
 
   fs.mkdirSync(outputDirectory, { recursive: true });
 
-  for (let i = 0; i < options.threadsCount; i++)
+  for (let i = 0; i < workerThreadsCount; i++)
     workerThreads.push(new threads.Worker(__filename));
 
   let readyDocsCount = 0;
