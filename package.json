@@ -7,6 +7,7 @@
   ],
   "scripts": {
     "app:start": "npm run start --workspace=app",
-    "pdfgen:start": "node ./pdf-generator/src/index.js"
+    "pdfgen:start": "node ./pdf-generator/src/index.js",
+    "benchmark:start": "node ./benchmark/src/index.js"
   }
 }
