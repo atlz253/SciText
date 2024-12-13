@@ -9,7 +9,6 @@ import threads from "node:worker_threads";
 
 if (threads.isMainThread) {
   const workerThreads = [];
-  const workerThreadsCount = os.cpus().length;
   const baseOutputDirectory = "./output/pdf-generator";
   const outputDirectory = path.resolve(
     baseOutputDirectory,
@@ -24,7 +23,13 @@ if (threads.isMainThread) {
     // @ts-ignore
     .option("--min-paragraphs <count>", "min paragraphs in pdf file", 10)
     // @ts-ignore
-    .option("--max-paragraphs <count>", "max paragraphs in pdf file", 100);
+    .option("--max-paragraphs <count>", "max paragraphs in pdf file", 100)
+    .option(
+      "--threads-count <count>",
+      "pdf generators threats count",
+      // @ts-ignore
+      Math.ceil(os.cpus().length / 2)
+    );
   program.parse(process.argv);
   const options = program.opts();
 
@@ -32,7 +37,7 @@ if (threads.isMainThread) {
 
   fs.mkdirSync(outputDirectory, { recursive: true });
 
-  for (let i = 0; i < workerThreadsCount; i++)
+  for (let i = 0; i < options.threadsCount; i++)
     workerThreads.push(new threads.Worker(__filename));
 
   let readyDocsCount = 0;
