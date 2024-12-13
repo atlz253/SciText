@@ -13,18 +13,21 @@ if (!fs.existsSync(options.input)) {
   process.exit(-1);
 }
 
-const fileNames = await fs.promises.readdir(options.input);
-
-for (const fileName of fileNames) {
-  const filePath = path.resolve(options.input, fileName);
+function uploadFileWithPath(filePath) {
   const file = fs.createReadStream(filePath);
   const form = new FormData();
-  form.append("pdf", file, fileName);
+  form.append("pdf", file, path.basename(filePath));
 
-  const response = await axios.post("http://localhost:3000/api/paper", form, {
+  return axios.post("http://localhost:3000/api/paper", form, {
     headers: {
       ...form.getHeaders(),
     },
   });
-  console.log(response.data);
+}
+
+const fileNames = await fs.promises.readdir(options.input);
+
+for (const fileName of fileNames) {
+  const filePath = path.resolve(options.input, fileName);
+  console.log((await uploadFileWithPath(filePath)).data);
 }
