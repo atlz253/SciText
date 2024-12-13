@@ -28,6 +28,8 @@ if (threads.isMainThread) {
   program.parse(process.argv);
   const options = program.opts();
 
+  if (options.seed) faker.seed(parseInt(options.seed));
+
   fs.mkdirSync(outputDirectory, { recursive: true });
 
   for (let i = 0; i < workerThreadsCount; i++)
@@ -39,8 +41,10 @@ if (threads.isMainThread) {
     worker.postMessage({
       outputDirectory,
       fileName: `${readyDocsCount}.pdf`,
-      minParagraphs: options.minParagraphs,
-      maxParagraphs: options.maxParagraphs,
+      paragraphs: faker.lorem.paragraphs(
+        { min: options.minParagraphs, max: options.maxParagraphs },
+        "\n\n"
+      ),
     });
     readyDocsCount++;
   }
@@ -58,18 +62,13 @@ if (threads.isMainThread) {
 } else {
   threads.parentPort?.on(
     "message",
-    ({ outputDirectory, fileName, minParagraphs, maxParagraphs }) => {
+    ({ outputDirectory, fileName, paragraphs }) => {
       const doc = new PDFDocument();
       const stream = fs.createWriteStream(
         path.resolve(outputDirectory, fileName)
       );
       doc.pipe(stream);
-      doc.text(
-        faker.lorem.paragraphs(
-          { min: minParagraphs, max: maxParagraphs },
-          "\n\n"
-        )
-      );
+      doc.text(paragraphs);
       doc.end();
       stream.on("close", () => {
         threads.parentPort?.postMessage({ done: true });
