@@ -1,10 +1,21 @@
+import os from "node:os";
 import fs from "node:fs";
 import axios from "axios";
 import path from "node:path";
 import FormData from "form-data";
+import { fileURLToPath } from "url";
 import { program } from "commander";
+import threads from "node:worker_threads";
 
-program.requiredOption("--input <path>", "Input directory with PDFs");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+program.requiredOption("--input <path>", "input directory with PDFs").option(
+  "--threads-count <count>",
+  "benchmark threads count",
+  // @ts-ignore
+  Math.ceil(os.cpus().length / 2)
+);
 program.parse(process.argv);
 const options = program.opts();
 
@@ -26,8 +37,36 @@ function uploadFileWithPath(filePath) {
 }
 
 const fileNames = await fs.promises.readdir(options.input);
+const fileUploaderWorkersCount = Math.min(
+  options.threadsCount,
+  fileNames.length
+);
+const fileUploaderWorkers = [];
 
-for (const fileName of fileNames) {
-  const filePath = path.resolve(options.input, fileName);
-  console.log((await uploadFileWithPath(filePath)).data);
+fileNames.reverse();
+
+for (let i = 0; i < fileUploaderWorkersCount; i++) {
+  fileUploaderWorkers.push(
+    new threads.Worker(path.resolve(__dirname, "./workers/fileUploader.js"))
+  );
+}
+
+function delegateFileUpload(worker) {
+  const fileName = fileNames.pop();
+  if (fileName) {
+    worker.postMessage({
+      filePath: path.resolve(options.input, fileName),
+    });
+  }
+}
+
+for (const worker of fileUploaderWorkers) {
+  delegateFileUpload(worker);
+  worker.on("message", () => {
+    if (fileNames.length === 0) {
+      worker.terminate();
+    } else {
+      delegateFileUpload(worker);
+    }
+  });
 }
