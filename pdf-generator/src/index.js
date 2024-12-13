@@ -1,7 +1,14 @@
 import fs from "node:fs";
+import path from "node:path";
 import PDFDocument from "pdfkit";
-import { faker } from "@faker-js/faker";
 import { program } from "commander";
+import { faker } from "@faker-js/faker";
+
+const baseOutputDirectory = "./output/pdf-generator";
+const outputDirectory = path.resolve(
+  baseOutputDirectory,
+  new Date().getTime().toString()
+);
 
 program
   .option("--seed <seed>", "random generation seed")
@@ -14,10 +21,26 @@ program
 program.parse(process.argv);
 const options = program.opts();
 
-const doc = new PDFDocument();
+fs.mkdirSync(outputDirectory, { recursive: true });
 
-doc.pipe(fs.createWriteStream("output.pdf"));
+async function generatePDF(fileName) {
+  return new Promise((resolve) => {
+    const doc = new PDFDocument();
+    const stream = fs.createWriteStream(
+      path.resolve(outputDirectory, fileName)
+    );
+    doc.pipe(stream);
+    doc.text(
+      faker.lorem.paragraphs(
+        { min: options.minParagraphs, max: options.maxParagraphs },
+        "\n\n"
+      )
+    );
+    doc.end();
+    stream.on("close", () => resolve(null));
+  });
+}
 
-doc.text(faker.lorem.paragraphs(10000, "\n\n"), 100, 100);
-
-doc.end();
+for (let i = 0; i < options.count; i++) {
+  await generatePDF(`${i}.pdf`);
+}
