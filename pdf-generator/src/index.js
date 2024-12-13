@@ -26,7 +26,7 @@ if (threads.isMainThread) {
     .option("--max-paragraphs <count>", "max paragraphs in pdf file", 100)
     .option(
       "--threads-count <count>",
-      "pdf generators threats count",
+      "pdf generators threads count",
       // @ts-ignore
       Math.ceil(os.cpus().length / 2)
     );
