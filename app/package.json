@@ -4,14 +4,10 @@
   "type": "module",
   "main": "./src/index.js",
   "scripts": {
-    "test": "vitest",
     "start": "node --watch ./src/index.js"
   },
   "author": "Fedor Alekseev",
   "license": "MIT",
-  "devDependencies": {
-    "vitest": "^2.1.8"
-  },
   "dependencies": {
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
