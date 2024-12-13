@@ -6,6 +6,6 @@
   ],
   "scripts": {
     "app:start": "npm run start --workspace=app",
-    "pdfgen:start": "npm run start --workspace=pdf-generator"
+    "pdfgen:start": "node ./pdf-generator/src/index.js"
   }
 }
