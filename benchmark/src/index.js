@@ -1,5 +1,30 @@
+import fs from "node:fs";
 import axios from "axios";
+import path from "node:path";
+import FormData from "form-data";
+import { program } from "commander";
 
-const response = await axios.get("http://localhost:3000/api/ping");
+program.requiredOption("--input <path>", "Input directory with PDFs");
+program.parse(process.argv);
+const options = program.opts();
 
-console.log(response.data);
+if (!fs.existsSync(options.input)) {
+  console.error(`${options.input} not exist!`);
+  process.exit(-1);
+}
+
+const fileNames = await fs.promises.readdir(options.input);
+
+for (const fileName of fileNames) {
+  const filePath = path.resolve(options.input, fileName);
+  const file = fs.createReadStream(filePath);
+  const form = new FormData();
+  form.append("pdf", file, fileName);
+
+  const response = await axios.post("http://localhost:3000/api/paper", form, {
+    headers: {
+      ...form.getHeaders(),
+    },
+  });
+  console.log(response.data);
+}
