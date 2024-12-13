@@ -1,0 +1,17 @@
+{
+  "name": "pdf-generator",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "vitest",
+    "start": "node ./src/index.js"
+  },
+  "author": "Fedor Alekseev",
+  "license": "MIT",
+  "dependencies": {
+    "@faker-js/faker": "^9.3.0",
+    "@types/pdfkit": "^0.13.7",
+    "pdfkit": "^0.15.1"
+  }
+}

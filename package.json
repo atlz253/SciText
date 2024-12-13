@@ -1,9 +1,11 @@
 {
   "name": "sci-text-workspace",
   "workspaces": [
-    "app"
+    "app",
+    "pdf-generator"
   ],
   "scripts": {
-    "app:start": "npm run start --workspace=app"
+    "app:start": "npm run start --workspace=app",
+    "pdfgen:start": "npm run start --workspace=pdf-generator"
   }
 }
