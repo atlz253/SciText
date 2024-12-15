@@ -12,6 +12,8 @@ The essence of the application is the ability to upload PDF files to the system,
 
 The application files are located in the `app` directory.
 
+Postgresql is required for the application to work, the connection data must be specified in `./app/.env`
+
 To launch the application, enter the command: `npm run app:start`.
 
 ## PDF generator
